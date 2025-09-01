@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth";
+import { auth, User } from "@/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<User | null> {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
     });
-    return session?.user || null;
+    return session?.user as User || null;
   } catch {
     return null;
   }

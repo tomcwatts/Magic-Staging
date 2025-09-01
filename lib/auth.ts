@@ -30,5 +30,15 @@ export const auth = betterAuth({
   plugins: [],
 });
 
-export type Session = typeof auth.$Infer.Session;
-export type User = typeof auth.$Infer.User;
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+  emailVerified?: Date;
+}
+
+export interface Session {
+  user: User;
+  token: string;
+}

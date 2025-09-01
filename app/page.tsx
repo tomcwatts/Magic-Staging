@@ -1,103 +1,115 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Navbar } from "@/components/layout/navbar";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <Navbar />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <div className="py-20 text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            Transform Empty Rooms with{" "}
+            <span className="text-blue-600">AI Virtual Staging</span>
+          </h1>
+          <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
+            Professional virtual staging for real estate professionals. Upload empty room photos 
+            and get stunning, market-ready staged images powered by advanced AI technology.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-x-6">
+            <Button size="lg" asChild>
+              <Link href="/sign-up">
+                Start Staging Rooms
+              </Link>
+            </Button>
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/sign-in">
+                Sign In
+              </Link>
+            </Button>
+          </div>
+        </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        {/* Features Section */}
+        <div className="py-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+              Why Choose VirtueStage Pro?
+            </h2>
+            <p className="mt-4 text-lg text-gray-600">
+              Professional-grade virtual staging at $4.99 per room
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Badge variant="secondary">AI Powered</Badge>
+                  Advanced Technology
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Powered by Google&apos;s Gemini 2.5 Flash Image model for 
+                  photorealistic virtual staging results that sell properties faster.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Badge variant="secondary">$4.99</Badge>
+                  Per Room Pricing
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Transparent, affordable pricing with bulk discounts. 
+                  No monthly fees - pay only for what you stage.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Badge variant="secondary">Fast</Badge>
+                  Quick Turnaround
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Get professionally staged images in minutes, not days. 
+                  Perfect for busy real estate professionals.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="py-16 text-center">
+          <div className="bg-blue-600 rounded-2xl px-6 py-16 text-white">
+            <h2 className="text-3xl font-bold mb-4">
+              Ready to Transform Your Listings?
+            </h2>
+            <p className="text-xl mb-8 text-blue-100">
+              Join thousands of real estate professionals using AI virtual staging
+            </p>
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/sign-up">
+                Get Started Free
+              </Link>
+            </Button>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Better-Auth fields
+  emailVerified DateTime?
+
+  // Relations
+  organizations OrganizationMember[]
+  createdJobs   StagingJob[]
+  usageLogs     UsageLog[]
+
+  @@map("users")
+}
+
+model Organization {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  creditsRemaining Int      @default(10)
+  planType         String   @default("individual") // individual, agency, enterprise
+  stripeCustomerId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  members      OrganizationMember[]
+  projects     Project[]
+  roomImages   RoomImage[]
+  stagingJobs  StagingJob[]
+  stagedImages StagedImage[]
+  transactions Transaction[]
+  usageLogs    UsageLog[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  role           String   @default("member") // owner, admin, member
+  createdAt      DateTime @default(now())
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
+model Project {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  address        String?
+  mlsNumber      String?
+  propertyType   String?  // house, condo, commercial
+  status         String   @default("active") // active, archived, completed
+  createdBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  roomImages   RoomImage[]
+
+  @@map("projects")
+}
+
+model RoomImage {
+  id             String   @id @default(cuid())
+  projectId      String
+  organizationId String
+  filename       String
+  s3Key          String
+  s3Url          String
+  fileSize       Int?
+  mimeType       String?
+  width          Int?
+  height         Int?
+  roomType       String? // living_room, bedroom, kitchen, etc.
+  uploadStatus   String   @default("uploaded") // uploaded, processing, ready
+  createdBy      String?
+  createdAt      DateTime @default(now())
+
+  // Relations
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stagingJobs  StagingJob[]
+
+  @@map("room_images")
+}
+
+model StagingJob {
+  id                     String    @id @default(cuid())
+  roomImageId            String
+  organizationId         String
+  prompt                 String
+  stylePreferences       Json?     // {"style": "modern", "colors": ["white", "gray"]}
+  status                 String    @default("pending") // pending, processing, completed, failed
+  aiModel                String    @default("gemini-2.5-flash-image")
+  aiCostCents            Int?
+  processingStartedAt    DateTime?
+  processingCompletedAt  DateTime?
+  errorMessage           String?
+  createdBy              String?
+  createdAt              DateTime  @default(now())
+
+  // Relations
+  roomImage    RoomImage      @relation(fields: [roomImageId], references: [id], onDelete: Cascade)
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?          @relation(fields: [createdBy], references: [id])
+  stagedImages StagedImage[]
+
+  @@map("staging_jobs")
+}
+
+model StagedImage {
+  id             String   @id @default(cuid())
+  stagingJobId   String
+  organizationId String
+  s3Key          String
+  s3Url          String
+  width          Int?
+  height         Int?
+  fileSize       Int?
+  aiMetadata     Json?
+  qualityScore   Decimal? @db.Decimal(3, 2)
+  isApproved     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  // Relations
+  stagingJob   StagingJob   @relation(fields: [stagingJobId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("staged_images")
+}
+
+model Transaction {
+  id                     String   @id @default(cuid())
+  organizationId         String
+  stripePaymentIntentId  String?
+  amountCents            Int
+  currency               String   @default("USD")
+  status                 String // succeeded, failed, pending
+  roomsPurchased         Int
+  description            String?
+  createdAt              DateTime @default(now())
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+model UsageLog {
+  id              String   @id @default(cuid())
+  organizationId  String
+  userId          String?
+  action          String // room_staged, image_downloaded, etc.
+  resourceId      String?
+  aiCostCents     Int?
+  billableCredits Int      @default(1)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id])
+
+  @@map("usage_logs")
+}

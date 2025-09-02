@@ -1,7 +1,7 @@
-# VirtueStage Pro: Complete AI Development Guide
+# Magic Staging: Complete AI Development Guide
 
 ## Overview
-This guide provides step-by-step instructions for building VirtueStage Pro, an AI-powered virtual staging SaaS application. Each section builds methodically on the previous, creating a complete, production-ready application.
+This guide provides step-by-step instructions for building Magic Staging, an AI-powered virtual staging SaaS application. Each section builds methodically on the previous, creating a complete, production-ready application.
 
 **Tech Stack**: Next.js 15, TypeScript, Prisma, PostgreSQL, Better-Auth, Stripe, AWS S3, Google Gemini AI, Tailwind CSS, shadcn/ui
 
@@ -69,7 +69,7 @@ STRIPE_WEBHOOK_SECRET="whsec_your_stripe_webhook_secret"
 AWS_REGION="us-east-1"
 AWS_ACCESS_KEY_ID="your_aws_access_key_id"
 AWS_SECRET_ACCESS_KEY="your_aws_secret_access_key"
-AWS_S3_BUCKET_NAME="virtuestage-storage-dev"
+AWS_S3_BUCKET_NAME="magicstaging-storage-dev"
 
 # Google AI (Gemini)
 GOOGLE_AI_API_KEY="your_google_ai_api_key"
@@ -514,7 +514,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VirtueStage Pro - AI Virtual Staging",
+  title: "Magic Staging - AI Virtual Staging",
   description: "Transform empty rooms with AI-powered virtual staging for real estate professionals",
   keywords: "virtual staging, real estate, AI, property marketing",
 };
@@ -568,7 +568,7 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold text-gray-900">
-              VirtueStage Pro
+              Magic Staging
             </Link>
           </div>
 
@@ -774,7 +774,7 @@ export function SignInForm() {
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>
-          Sign in to your VirtueStage Pro account
+          Sign in to your Magic Staging account
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -3462,7 +3462,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
 ```typescript
 // Integration test examples (implement with your preferred testing framework)
 
-describe('VirtueStage Pro Integration Tests', () => {
+describe('Magic Staging Integration Tests', () => {
   describe('Authentication Flow', () => {
     test('should allow user to sign up with email', async () => {
       // Test email signup
@@ -3657,7 +3657,7 @@ export function invalidateCache(pattern: string): void {
 
 **Create `deploy.md`:**
 ```markdown
-# VirtueStage Pro Deployment Guide
+# Magic Staging Deployment Guide
 
 ## Pre-Deployment Checklist
 
@@ -3714,9 +3714,9 @@ export function invalidateCache(pattern: string): void {
    - [ ] Database performance monitoring
 
 ## Production URLs
-- App: https://virtuestage.pro
-- API: https://virtuestage.pro/api
-- Admin: https://virtuestage.pro/admin
+- App: https://magicstaging.com
+- API: https://magicstaging.com/api
+- Admin: https://magicstaging.com/admin
 ```
 
 **Final Verification Checklist:**
@@ -3735,7 +3735,7 @@ export function invalidateCache(pattern: string): void {
 
 ## Summary
 
-This comprehensive development guide provides everything needed to build VirtueStage Pro from foundation to production deployment. Each phase builds methodically on the previous, ensuring a robust, scalable, and profitable SaaS application.
+This comprehensive development guide provides everything needed to build Magic Staging from foundation to production deployment. Each phase builds methodically on the previous, ensuring a robust, scalable, and profitable SaaS application.
 
 **Key Success Metrics:**
 - Complete user workflow from signup to staged room download

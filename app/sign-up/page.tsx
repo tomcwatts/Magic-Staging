@@ -10,7 +10,7 @@ export default function SignUpPage() {
             Create your account
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Join VirtueStage Pro and start transforming empty rooms with AI
+            Join Magic Staging and start transforming empty rooms with AI
           </p>
         </div>
         

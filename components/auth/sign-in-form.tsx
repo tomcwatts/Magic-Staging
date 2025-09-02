@@ -58,7 +58,7 @@ export function SignInForm() {
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>
-          Sign in to your VirtueStage Pro account
+          Sign in to your Magic Staging account
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

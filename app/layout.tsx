@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VirtueStage Pro - AI Virtual Staging",
+  title: "Magic Staging - AI Virtual Staging",
   description: "Transform empty rooms with AI-powered virtual staging for real estate professionals",
   keywords: "virtual staging, real estate, AI, property marketing",
 };

@@ -38,7 +38,7 @@ export default function Home() {
         <div className="py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Why Choose VirtueStage Pro?
+              Why Choose Magic Staging?
             </h2>
             <p className="mt-4 text-lg text-gray-600">
               Professional-grade virtual staging at $4.99 per room

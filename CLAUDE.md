@@ -1,7 +1,7 @@
-# VirtueStage Pro - AI Virtual Staging SaaS
+# Magic Staging - AI Virtual Staging SaaS
 
 ## Project Overview
-VirtueStage Pro is a Next.js 15 TypeScript SaaS application that uses Google's Gemini 2.5 Flash Image model to perform AI-powered virtual staging for real estate professionals. Room-based pricing at $4.99 per room.
+Magic Staging is a Next.js 15 TypeScript SaaS application that uses Google's Gemini 2.5 Flash Image model to perform AI-powered virtual staging for real estate professionals. Room-based pricing at $4.99 per room.
 
 ## Tech Stack
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS, shadcn/ui

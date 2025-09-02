@@ -73,7 +73,7 @@ export function SignUpForm() {
       <CardHeader>
         <CardTitle>Create Account</CardTitle>
         <CardDescription>
-          Get started with VirtueStage Pro
+          Get started with Magic Staging
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

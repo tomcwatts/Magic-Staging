@@ -21,12 +21,7 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
   },
-  advanced: {
-    generateId: () => {
-      // Use cuid for consistent ID generation
-      return crypto.randomUUID();
-    },
-  },
+  // Removed deprecated generateId configuration
   plugins: [],
 });
 

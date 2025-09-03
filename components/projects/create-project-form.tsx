@@ -11,8 +11,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Loader2, Home, Building, Building2 } from "lucide-react";
 
+interface Project {
+  id: string;
+  name: string;
+  address?: string | null;
+  mlsNumber?: string | null;
+  propertyType?: string | null;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface CreateProjectFormProps {
-  onSuccess?: (project: any) => void;
+  onSuccess?: (project: Project) => void;
   onCancel?: () => void;
 }
 
@@ -71,11 +82,11 @@ export function CreateProjectForm({ onSuccess, onCancel }: CreateProjectFormProp
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData: { error?: string } = await response.json();
         throw new Error(errorData.error || 'Failed to create project');
       }
 
-      const result = await response.json();
+      const result: { project: Project } = await response.json();
       
       toast.success('Project created successfully!');
       

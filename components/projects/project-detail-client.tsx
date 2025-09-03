@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MobileTabs, useMobile } from "@/components/ui/responsive-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MultiFileUpload } from "@/components/upload/multi-file-upload";
@@ -18,6 +19,7 @@ import {
   Calendar
 } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface StagedImage {
   id: string;
@@ -26,10 +28,17 @@ interface StagedImage {
   isApproved: boolean;
 }
 
+interface StylePreferences {
+  style?: string;
+  colors?: string[];
+  furnitureCount?: 'minimal' | 'moderate' | 'full';
+  budget?: 'economy' | 'mid_range' | 'luxury';
+}
+
 interface StagingJob {
   id: string;
   status: string;
-  stylePreferences: any;
+  stylePreferences: StylePreferences | null;
   createdAt: Date;
   stagedImages: StagedImage[];
 }
@@ -60,6 +69,7 @@ interface ProjectDetailClientProps {
 
 export function ProjectDetailClient({ project, creditsRemaining }: ProjectDetailClientProps) {
   const [refreshKey, setRefreshKey] = useState(0);
+  const isMobile = useMobile();
 
   const handleUploadComplete = () => {
     // Refresh the component to show new uploads
@@ -97,6 +107,242 @@ export function ProjectDetailClient({ project, creditsRemaining }: ProjectDetail
 
   const groupedImages = groupImagesByRoomType(project.roomImages);
   const roomTypes = Object.keys(groupedImages);
+
+  const tabsData = [
+    {
+      id: "upload",
+      label: isMobile ? "Upload" : "Upload Images",
+      icon: Upload,
+      content: (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Upload Room Images</CardTitle>
+              <CardDescription>
+                Upload high-quality images of empty or furnished rooms for virtual staging.
+                The AI works best with well-lit, wide-angle shots that show the entire room.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MultiFileUpload 
+                key={refreshKey}
+                projectId={project.id}
+                onUploadComplete={handleUploadComplete}
+                maxFiles={20}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      )
+    },
+    {
+      id: "gallery",
+      label: isMobile ? "Gallery" : "Image Gallery", 
+      icon: ImageIcon,
+      content: project.roomImages.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No images uploaded yet
+            </h3>
+            <p className="text-gray-600 text-center mb-4">
+              Upload room images to get started with virtual staging
+            </p>
+            <Button>
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Images
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          {roomTypes.map(roomType => (
+            <Card key={roomType}>
+              <CardHeader>
+                <CardTitle className="capitalize">
+                  {roomType === 'unspecified' ? 'Unspecified Rooms' : roomType.replace('_', ' ')}
+                </CardTitle>
+                <CardDescription>
+                  {groupedImages[roomType].length} image{groupedImages[roomType].length !== 1 ? 's' : ''}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className={cn(
+                  "grid gap-4",
+                  isMobile ? "grid-cols-1" : "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                )}>
+                  {groupedImages[roomType].map((image) => (
+                    <Card key={image.id} className="overflow-hidden">
+                      <div className="relative aspect-video">
+                        <Image
+                          src={image.s3Url}
+                          alt={image.filename}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                          <Button
+                            size="sm"
+                            className="opacity-0 hover:opacity-100 transition-opacity"
+                            asChild
+                          >
+                            <Link href={`#staging`}>
+                              <Wand2 className="mr-2 h-4 w-4" />
+                              Stage Room
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                      <CardContent className="p-3">
+                        <div className="space-y-1">
+                          <p className="font-medium text-sm truncate">{image.filename}</p>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>{image.fileSize ? (image.fileSize / 1024 / 1024).toFixed(1) : '0'} MB</span>
+                            {image.width && image.height && (
+                              <span>{image.width}×{image.height}</span>
+                            )}
+                          </div>
+                          <div className="flex items-center text-xs text-muted-foreground">
+                            <Calendar className="mr-1 h-3 w-3" />
+                            {formatDate(new Date(image.createdAt))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )
+    },
+    {
+      id: "staging",
+      label: isMobile ? "Staging" : "AI Staging",
+      icon: Wand2,
+      content: project.roomImages.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <Wand2 className="h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Upload room images first
+            </h3>
+            <p className="text-gray-600 text-center mb-4">
+              You need to upload room images before you can start staging
+            </p>
+            <Button>
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Images
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <RoomStagingInterface 
+          roomImages={project.roomImages.map(image => ({
+            id: image.id,
+            filename: image.filename,
+            url: image.s3Url,
+            roomType: image.roomType || undefined,
+            width: image.width || undefined,
+            height: image.height || undefined,
+            fileSize: image.fileSize || undefined,
+          }))}
+          creditsRemaining={creditsRemaining}
+          onStagingComplete={handleStagingComplete}
+        />
+      )
+    },
+    {
+      id: "staged",
+      label: isMobile ? "Staged" : "Staged Images",
+      icon: CheckCircle,
+      content: project.stagedImagesCount === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <CheckCircle className="h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No staged images yet
+            </h3>
+            <p className="text-gray-600 text-center mb-4">
+              Upload room images and use AI staging to see results here
+            </p>
+            <Button>
+              <Wand2 className="mr-2 h-4 w-4" />
+              Start Staging
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          {project.roomImages.map((roomImage) => 
+            roomImage.stagingJobs
+              .filter(job => job.status === 'completed' && job.stagedImages.length > 0)
+              .map((job) => (
+                <Card key={job.id}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">
+                      Staged: {roomImage.filename}
+                    </CardTitle>
+                    <CardDescription>
+                      Style: {job.stylePreferences?.style || 'modern'} • 
+                      Created {formatDate(new Date(job.createdAt))}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className={cn(
+                      "grid gap-6",
+                      isMobile ? "grid-cols-1 space-y-4" : "lg:grid-cols-2"
+                    )}>
+                      {/* Original Image */}
+                      <div>
+                        <h4 className="font-medium mb-3">Original</h4>
+                        <div className="relative aspect-video">
+                          <Image
+                            src={roomImage.s3Url}
+                            alt={`Original ${roomImage.filename}`}
+                            fill
+                            className="object-cover rounded-lg"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Staged Images */}
+                      <div>
+                        <h4 className="font-medium mb-3">AI Staged</h4>
+                        <div className="space-y-4">
+                          {job.stagedImages.map((stagedImage) => (
+                            <div key={stagedImage.id} className="relative aspect-video">
+                              <Image
+                                src={stagedImage.s3Url}
+                                alt="Staged room"
+                                fill
+                                className="object-cover rounded-lg"
+                              />
+                              {stagedImage.isApproved && (
+                                <Badge className="absolute top-2 right-2 bg-green-500">
+                                  <CheckCircle className="mr-1 h-3 w-3" />
+                                  Approved
+                                </Badge>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+          )}
+        </div>
+      )
+    }
+  ];
+
+  if (isMobile) {
+    return <MobileTabs tabs={tabsData} defaultTab="upload" className="h-full" />;
+  }
 
   return (
     <Tabs defaultValue="upload" className="space-y-6">

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requireAuthWithOrg } from '@/lib/auth-utils';
 import { validateFile, saveUploadedFile } from '@/lib/local-storage';
+import { processImage, validateImageFile, generateThumbnail } from '@/lib/image-processing';
 
 const uploadSchema = z.object({
   projectId: z.string().cuid(),
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     // Process each file
     for (const file of files) {
       try {
-        // Validate file
+        // Basic file validation first
         const validation = validateFile(file);
         if (!validation.valid) {
           errors.push(`${file.name}: ${validation.error}`);
@@ -61,13 +62,32 @@ export async function POST(request: NextRequest) {
         }
         
         // Convert file to buffer
-        const buffer = Buffer.from(await file.arrayBuffer());
+        const originalBuffer = Buffer.from(await file.arrayBuffer());
         
-        // Save file to local storage
+        // Validate and process image
+        const imageValidation = await validateImageFile(originalBuffer);
+        if (!imageValidation.isValid) {
+          errors.push(`${file.name}: ${imageValidation.error}`);
+          continue;
+        }
+        
+        // Process image for optimization
+        const processedResult = await processImage(originalBuffer, {
+          maxWidth: 2048,
+          maxHeight: 2048,
+          quality: 85,
+          format: 'jpeg',
+          progressive: true,
+        });
+        
+        // Generate thumbnail for faster loading
+        const thumbnailBuffer = await generateThumbnail(processedResult.buffer, 300);
+        
+        // Save processed image to local storage
         const saveResult = await saveUploadedFile(
-          buffer,
+          processedResult.buffer,
           file.name,
-          file.type,
+          'image/jpeg', // Always save as JPEG after processing
           userWithOrg.organization.id,
           validatedData.projectId
         );
@@ -85,10 +105,10 @@ export async function POST(request: NextRequest) {
             filename: saveResult.file.filename,
             s3Key: saveResult.file.path, // Using local path in s3Key field for now
             s3Url: saveResult.file.url,
-            fileSize: saveResult.file.size,
-            mimeType: saveResult.file.mimeType,
-            width: saveResult.file.width,
-            height: saveResult.file.height,
+            fileSize: processedResult.metadata.size,
+            mimeType: 'image/jpeg',
+            width: processedResult.metadata.width,
+            height: processedResult.metadata.height,
             roomType: validatedData.roomType,
             uploadStatus: 'ready',
             createdBy: userWithOrg.user.id,
@@ -100,10 +120,12 @@ export async function POST(request: NextRequest) {
           filename: saveResult.file.filename,
           originalName: saveResult.file.originalName,
           url: saveResult.file.url,
-          size: saveResult.file.size,
-          mimeType: saveResult.file.mimeType,
-          width: saveResult.file.width,
-          height: saveResult.file.height,
+          size: processedResult.metadata.size,
+          originalSize: processedResult.metadata.originalSize,
+          compressionRatio: processedResult.metadata.compressionRatio,
+          mimeType: 'image/jpeg',
+          width: processedResult.metadata.width,
+          height: processedResult.metadata.height,
           roomType: validatedData.roomType,
         });
       } catch (fileError) {

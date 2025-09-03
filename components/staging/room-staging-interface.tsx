@@ -23,10 +23,19 @@ interface RoomImage {
   fileSize?: number;
 }
 
+interface StagingResult {
+  success: boolean;
+  stagingJobId: string;
+  stagedImageUrl?: string;
+  processingTime?: number;
+  creditsRemaining: number;
+  error?: string;
+}
+
 interface RoomStagingInterfaceProps {
   roomImages: RoomImage[];
   creditsRemaining: number;
-  onStagingComplete?: (result: any) => void;
+  onStagingComplete?: (result: StagingResult) => void;
 }
 
 interface StagingRequest {

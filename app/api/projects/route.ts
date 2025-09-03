@@ -79,7 +79,15 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
     
     // Build where clause
-    const where: any = {
+    const where: {
+      organizationId: string;
+      status?: string;
+      OR?: Array<{
+        name?: { contains: string; mode: 'insensitive' };
+        address?: { contains: string; mode: 'insensitive' };
+        mlsNumber?: { contains: string; mode: 'insensitive' };
+      }>;
+    } = {
       organizationId: userWithOrg.organization.id,
     };
     

@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Upload, X, FileImage, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { UploadError } from "@/components/ui/error-states";
+import { ImageSkeleton } from "@/components/ui/loading-states";
 
 export interface UploadedFile {
   id?: string;
@@ -154,18 +156,22 @@ export function MultiFileUpload({
         }
       }));
 
-      // Show results
-      if (result.success) {
+      // Show results with better feedback
+      if (result.success && result.counts.failed === 0) {
         toast.success(
-          `Successfully uploaded ${result.counts.successful} of ${result.counts.total} files`
+          `Successfully uploaded ${result.counts.successful} ${result.counts.successful === 1 ? 'file' : 'files'}`
+        );
+        onUploadComplete?.(result);
+      } else if (result.success && result.counts.failed > 0) {
+        toast.success(
+          `Uploaded ${result.counts.successful} files successfully`
+        );
+        toast.error(
+          `${result.counts.failed} files failed to upload`
         );
         onUploadComplete?.(result);
       } else {
-        toast.error('Upload failed for all files');
-      }
-
-      if (result.errors && result.errors.length > 0) {
-        toast.error(`${result.counts.failed} files failed to upload`);
+        toast.error('All uploads failed');
       }
 
     } catch (error) {
@@ -393,7 +399,10 @@ export function MultiFileUpload({
                         )}
                         
                         {fileItem.status === 'error' && fileItem.error && (
-                          <p className="text-xs text-red-500">{fileItem.error}</p>
+                          <p className="text-xs text-red-500 flex items-center">
+                            <AlertCircle className="h-3 w-3 mr-1 flex-shrink-0" />
+                            {fileItem.error}
+                          </p>
                         )}
                       </div>
                     </CardContent>

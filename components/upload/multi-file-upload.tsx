@@ -95,7 +95,7 @@ export function MultiFileUpload({
       // Prepare form data
       const formData = new FormData();
       formData.append('projectId', projectId);
-      if (roomType) {
+      if (roomType && roomType !== 'unspecified') {
         formData.append('roomType', roomType);
       }
 
@@ -246,7 +246,7 @@ export function MultiFileUpload({
             <SelectValue placeholder="Select room type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">No specific type</SelectItem>
+            <SelectItem value="unspecified">No specific type</SelectItem>
             {ROOM_TYPES.map(type => (
               <SelectItem key={type.value} value={type.value}>
                 {type.label}

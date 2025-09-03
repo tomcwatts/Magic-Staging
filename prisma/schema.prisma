@@ -16,12 +16,16 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Better-Auth fields
-  emailVerified DateTime?
+  emailVerified Boolean @default(false)
 
   // Relations
   organizations OrganizationMember[]
   createdJobs   StagingJob[]
   usageLogs     UsageLog[]
+  
+  // Better-Auth relations
+  sessions      Session[]
+  accounts      Account[]
 
   @@map("users")
 }
@@ -183,4 +187,55 @@ model UsageLog {
   user         User?        @relation(fields: [userId], references: [id])
 
   @@map("usage_logs")
+}
+
+// Better-Auth required models
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  expiresAt             DateTime?
+  accessTokenExpiresAt  DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+  @@map("verifications")
 }

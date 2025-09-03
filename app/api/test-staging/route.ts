@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: result.success,
       originalImage: `/uploads/${filename}`,
-      analysis: result.success ? 'Analysis completed - check server logs' : undefined,
+      stagedImage: result.outputPath, // Path to generated staged image
+      analysis: result.success ? 'Staging completed successfully!' : undefined,
       error: result.error,
       processingTime: result.processingTime,
     });

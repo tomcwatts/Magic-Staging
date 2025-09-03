@@ -14,8 +14,6 @@ import {
   Image as ImageIcon,
   Wand2,
   CheckCircle,
-  AlertCircle,
-  Loader2,
   Calendar
 } from "lucide-react";
 import Image from "next/image";
@@ -38,7 +36,7 @@ interface StylePreferences {
 interface StagingJob {
   id: string;
   status: string;
-  stylePreferences: StylePreferences | null;
+  stylePreferences: any;
   createdAt: Date;
   stagedImages: StagedImage[];
 }
@@ -244,10 +242,10 @@ export function ProjectDetailClient({ project, creditsRemaining }: ProjectDetail
             id: image.id,
             filename: image.filename,
             url: image.s3Url,
-            roomType: image.roomType || undefined,
-            width: image.width || undefined,
-            height: image.height || undefined,
-            fileSize: image.fileSize || undefined,
+            roomType: image.roomType ?? undefined,
+            width: image.width ?? undefined,
+            height: image.height ?? undefined,
+            fileSize: image.fileSize ?? undefined,
           }))}
           creditsRemaining={creditsRemaining}
           onStagingComplete={handleStagingComplete}
@@ -491,10 +489,10 @@ export function ProjectDetailClient({ project, creditsRemaining }: ProjectDetail
               id: image.id,
               filename: image.filename,
               url: image.s3Url,
-              roomType: image.roomType,
-              width: image.width,
-              height: image.height,
-              fileSize: image.fileSize,
+              roomType: image.roomType ?? undefined,
+              width: image.width ?? undefined,
+              height: image.height ?? undefined,
+              fileSize: image.fileSize ?? undefined,
             }))}
             creditsRemaining={creditsRemaining}
             onStagingComplete={handleStagingComplete}

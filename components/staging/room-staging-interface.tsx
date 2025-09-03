@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Wand2, Palette, Home, Clock, DollarSign, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, Wand2, Palette, Home, Clock, DollarSign, CheckCircle, AlertCircle, CreditCard } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface RoomImage {
   id: string;
@@ -202,9 +203,19 @@ export function RoomStagingInterface({ roomImages, creditsRemaining, onStagingCo
                 Each room staging uses 1 credit
               </CardDescription>
             </div>
-            <Badge variant={creditsRemaining > 0 ? "default" : "destructive"} className="text-lg px-3 py-1">
-              {creditsRemaining} credits
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant={creditsRemaining > 0 ? "default" : "destructive"} className="text-lg px-3 py-1">
+                {creditsRemaining} credits
+              </Badge>
+              {creditsRemaining <= 3 && (
+                <Button asChild size="sm">
+                  <Link href="/dashboard/billing">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Buy Credits
+                  </Link>
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
       </Card>

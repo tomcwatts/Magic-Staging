@@ -2,6 +2,9 @@ import { getCurrentUserWithOrg } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Zap, CreditCard, AlertCircle } from "lucide-react";
 
 export default async function DashboardPage() {
   const userWithOrg = await getCurrentUserWithOrg();
@@ -27,14 +30,23 @@ export default async function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               Credits Remaining
             </CardTitle>
+            <Zap className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-blue-600">
               {userWithOrg.organization?.creditsRemaining || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Room stagings available
+              AI staging operations available
             </p>
+            {(userWithOrg.organization?.creditsRemaining || 0) <= 5 && (
+              <div className="mt-2">
+                <Badge variant="destructive" className="text-xs">
+                  <AlertCircle className="mr-1 h-3 w-3" />
+                  Running low
+                </Badge>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -85,21 +97,66 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      {/* Low credits warning */}
+      {(userWithOrg.organization?.creditsRemaining || 0) <= 3 && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-orange-600 mr-3" />
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-orange-800">
+                  Running low on credits
+                </h3>
+                <p className="text-sm text-orange-700">
+                  You have {userWithOrg.organization?.creditsRemaining || 0} credits remaining. Purchase more to continue staging rooms.
+                </p>
+              </div>
+              <Button asChild className="ml-4">
+                <Link href="/dashboard/billing">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Buy Credits
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>
-            Get started with your first virtual staging project
+            Get started with your virtual staging projects
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Ready to transform empty rooms?
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Create your first project and upload room photos to get started with AI virtual staging.
-            </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Ready to transform empty rooms?
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Create your first project and upload room photos to get started with AI virtual staging.
+              </p>
+              <Button asChild>
+                <Link href="/dashboard/projects/new">
+                  Create New Project
+                </Link>
+              </Button>
+            </div>
+            <div className="flex flex-col gap-2 sm:ml-4">
+              <Button asChild variant="outline">
+                <Link href="/dashboard/billing">
+                  <Zap className="mr-2 h-4 w-4" />
+                  Buy Credits
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/dashboard/projects">
+                  View All Projects
+                </Link>
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

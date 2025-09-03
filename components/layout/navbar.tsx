@@ -38,6 +38,10 @@ export function Navbar() {
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 
+                <Button variant="outline" asChild>
+                  <Link href="/test-ai">🧪 Test AI</Link>
+                </Button>
+                
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">

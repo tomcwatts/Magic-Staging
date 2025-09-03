@@ -9,6 +9,41 @@ This guide provides step-by-step instructions for building Magic Staging, an AI-
 
 ---
 
+## ✅ Phase 3.5: AI Validation Spike (COMPLETED)
+
+**🎉 VALIDATION SUCCESSFUL!** Before continuing with production infrastructure, we validated the core AI concept.
+
+### What Was Validated:
+- ✅ **Gemini 2.5 Flash Image Preview** successfully generates realistic staged room images
+- ✅ **Processing time** is reasonable (~10 seconds per image)
+- ✅ **Image quality** is excellent and market-ready
+- ✅ **Style variations** work (modern, traditional, minimalist)
+- ✅ **Custom prompts** are interpreted correctly
+
+### Validation Implementation:
+- **Test Page**: `/test-ai` - Simple validation interface
+- **API Route**: `/api/test-staging` - Basic image processing  
+- **AI Service**: `lib/gemini-simple.ts` - Direct Gemini integration
+- **File Storage**: Local `/public/uploads/` (temporary)
+
+### Key Learnings:
+- **Critical Model**: Must use `gemini-2.5-flash-image-preview` (not regular `gemini-2.5-flash`)
+- **Image Generation Works**: AI produces photorealistic staged rooms
+- **Cost Effective**: ~$0.039 per generated image
+- **Fast Processing**: 8-12 seconds per room staging
+
+### Files Created (Now Merged to Main):
+```
+app/test-ai/page.tsx                 # Validation UI
+app/api/test-staging/route.ts        # Test API endpoint
+lib/gemini-simple.ts                 # Simplified AI service
+components/layout/navbar.tsx         # Added test link
+```
+
+This validation saved weeks of infrastructure work by proving the concept works before building production systems.
+
+---
+
 ## Phase 1: Project Foundation Setup
 
 ### 1.1 Environment Setup
@@ -231,7 +266,7 @@ model StagingJob {
   prompt                 String
   stylePreferences       Json?     // {"style": "modern", "colors": ["white", "gray"]}
   status                 String    @default("pending") // pending, processing, completed, failed
-  aiModel                String    @default("gemini-2.5-flash-image")
+  aiModel                String    @default("gemini-2.5-flash-image-preview")
   aiCostCents            Int?
   processingStartedAt    DateTime?
   processingCompletedAt  DateTime?
@@ -1711,7 +1746,7 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
 // Get Gemini 2.5 Flash Image model
 const model = genAI.getGenerativeModel({ 
-  model: "gemini-2.5-flash-image" 
+  model: "gemini-2.5-flash-image-preview" 
 });
 
 export interface StagingRequest {
@@ -1777,7 +1812,7 @@ export async function stageRoom(request: StagingRequest): Promise<StagingResult>
     return {
       imageBuffer: generatedImageBuffer,
       metadata: {
-        model: 'gemini-2.5-flash-image',
+        model: 'gemini-2.5-flash-image-preview',
         prompt: optimizedPrompt,
         style: request.style || 'modern',
         roomType: request.roomType,
@@ -1796,7 +1831,7 @@ export async function stageRoom(request: StagingRequest): Promise<StagingResult>
     return {
       imageBuffer: Buffer.alloc(0),
       metadata: {
-        model: 'gemini-2.5-flash-image',
+        model: 'gemini-2.5-flash-image-preview',
         prompt: request.prompt,
         style: request.style || 'modern',
         roomType: request.roomType,

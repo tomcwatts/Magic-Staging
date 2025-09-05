@@ -19,6 +19,7 @@ This guide will walk you through setting up Stripe payments for your Magic Stagi
 - ✅ You have a Stripe account
 - ✅ Magic Staging app is running locally (`npm run dev`)
 - ✅ You can access your local app at `http://localhost:3000`
+- ✅ You can sign in and have an organization context (routes require authentication with organization via requireAuthWithOrg)
 
 ---
 
@@ -50,7 +51,7 @@ This guide will walk you through setting up Stripe payments for your Magic Stagi
 2. Click **"Reveal test key"** and copy it
 
 ### Update Your Environment File
-1. Open `/Users/tom/Sites/virtual-stage/.env.local`
+1. Open `/Users/buildkite/sites/projects/Magic-Staging/.env.local`
 2. Replace these lines:
 ```env
 # Replace these placeholder values:
@@ -61,6 +62,8 @@ STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_51ABC123..." # Your real publishable key
 STRIPE_SECRET_KEY="sk_test_51XYZ789..."                 # Your real secret key
 ```
+
+Note: This app requires both NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (client) and STRIPE_SECRET_KEY (server). If STRIPE_SECRET_KEY is missing, the server will error at startup.
 
 3. **Restart your development server:**
 ```bash
@@ -86,7 +89,7 @@ brew install stripe/stripe-cli/stripe
 ### Test Your Webhook Endpoint
 1. **In a new terminal window**, navigate to your project:
 ```bash
-cd /Users/tom/Sites/virtual-stage
+cd /Users/buildkite/sites/projects/Magic-Staging
 ```
 
 2. **Login to Stripe CLI:**
@@ -122,6 +125,7 @@ npm run dev
 - **Leave the `stripe listen` command running** in its terminal
 - This forwards Stripe events to your local app
 - You'll see webhook events appear in this terminal as they happen
+- If you restart `stripe listen`, Stripe will print a new signing secret. Update `STRIPE_WEBHOOK_SECRET` in `.env.local` and restart `npm run dev`.
 
 ---
 
@@ -129,7 +133,7 @@ npm run dev
 
 ### Test the Full Flow
 1. **Visit your app:** http://localhost:3000
-2. **Sign in/up** and navigate to **Dashboard → Billing**
+2. **Sign in/up** and navigate to **Dashboard → Billing** (authentication with organization is required)
 3. **Select a credit package** (try the 10 credits package)
 4. **Use Stripe's test credit card:**
    - **Card number:** `4242 4242 4242 4242`
@@ -142,9 +146,8 @@ npm run dev
 2. ✅ You can enter the test card details
 3. ✅ Click "Pay $44.90" and payment processes
 4. ✅ You see a success message
-5. ✅ Credits are added to your account automatically
+5. ✅ Credits are added to your account automatically (via webhook)
 6. ✅ Transaction appears in your billing history
-
 ### Check the Webhook Terminal
 In your `stripe listen` terminal, you should see:
 ```bash

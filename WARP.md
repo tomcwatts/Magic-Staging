@@ -20,8 +20,8 @@ Common commands
 - Lint
   - Lint entire project: npm run lint
   - Lint a single file/path: npm run lint -- app/page.tsx
-- Typecheck (no script defined)
-  - npx tsc --noEmit
+- Typecheck
+  - npm run typecheck
 - Prisma (database)
   - Apply schema to DB: npx prisma db push
   - Generate client/types: npx prisma generate

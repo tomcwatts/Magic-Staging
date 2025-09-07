@@ -38,8 +38,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    console.log(`Processing webhook event: ${event.type}`);
     switch (event.type) {
       case 'payment_intent.succeeded':
+        console.log('Payment succeeded event received:', JSON.stringify(event.data.object, null, 2));
         await handlePaymentSucceeded(event.data.object);
         break;
       
